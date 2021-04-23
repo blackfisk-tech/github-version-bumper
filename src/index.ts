@@ -1,5 +1,5 @@
-import { bumpVersion } from './helpers/bumper'
 import { Toolkit } from 'actions-toolkit'
+import { bumpVersion } from './helpers/bumper'
 
 Toolkit.run(async (tools) => {
   const fileName = process.env.VERSION_FILE_NAME || 'package.json'
@@ -22,6 +22,7 @@ Toolkit.run(async (tools) => {
       'user.email',
       `"${githubEmail}"`,
     ])
+    let ignoreBump = false
 
     const currentBranch = /refs\/[a-zA-Z]+\/(.*)/.exec(
       process.env.GITHUB_REF as string,
@@ -37,21 +38,24 @@ Toolkit.run(async (tools) => {
 
     // Bumping Starts
 
-    if (lastCommit.includes('[ci-bump version=')) {
-      const splitted = lastCommit.split('[ci-bump version=\\"')
+    if (lastCommit.includes('ci-ignore')) {
+      console.log('ignore')
+      ignoreBump = true
+    } else if (lastCommit.includes('[ci-version=')) {
+      const splitted = lastCommit.split('[ci-version=\\"')
       const replace = splitted[1].split('\\"')[0]
       console.log('replace:', replace)
       await bumpVersion(fileName, { replace, entry })
-    } else if (lastCommit.includes('[ci-bump pre=')) {
+    } else if (lastCommit.includes('[ci-pre=')) {
       console.log('pre')
-      const splitted = lastCommit.split('[ci-bump pre=\\"')
+      const splitted = lastCommit.split('[ci-pre=\\"')
       const pre = splitted[1].split('\\"')[0]
       console.log('pre:', pre)
       await bumpVersion(fileName, { pre, entry })
-    } else if (lastCommit.includes('[ci-bump major]')) {
+    } else if (lastCommit.includes('[ci-major]')) {
       console.log('major')
       await bumpVersion(fileName, { major: true, entry })
-    } else if (lastCommit.includes('[ci-bump minor]')) {
+    } else if (lastCommit.includes('[ci-minor]')) {
       console.log('minor')
       await bumpVersion(fileName, { minor: true, entry })
     } else {
@@ -59,20 +63,22 @@ Toolkit.run(async (tools) => {
       await bumpVersion(fileName)
     }
 
-    const newVersion = JSON.parse(tools.getFile(fileName)).version
+    if (!ignoreBump) {
+      const newVersion = JSON.parse(tools.getFile(fileName)).version
 
-    await tools.runInWorkspace('git', [
-      'commit',
-      '-a',
-      '-m',
+      await tools.runInWorkspace('git', [
+        'commit',
+        '-a',
+        '-m',
       `ci: ${commitMessage} ${newVersion}`,
-    ])
+      ])
 
-    // PUSH THE CHANGES
-    const remoteRepo = `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`
-    await tools.runInWorkspace('git', ['tag', newVersion])
-    await tools.runInWorkspace('git', ['push', remoteRepo, '--follow-tags'])
-    await tools.runInWorkspace('git', ['push', remoteRepo, '--tags'])
+      // PUSH THE CHANGES
+      const remoteRepo = `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`
+      await tools.runInWorkspace('git', ['tag', newVersion])
+      await tools.runInWorkspace('git', ['push', remoteRepo, '--follow-tags'])
+      await tools.runInWorkspace('git', ['push', remoteRepo, '--tags'])
+    }
   } catch (e) {
     tools.log.fatal(e)
     tools.exit.failure('Failed to bump version')
