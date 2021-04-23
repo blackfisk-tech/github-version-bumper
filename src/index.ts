@@ -61,12 +61,9 @@ Toolkit.run(async (tools) => {
     } else if (lastCommit.toLowerCase().includes('ci-minor')) {
       console.log('minor')
       await bumpVersion(fileName, { minor: true, entry })
-    } else if (lastCommit.toLowerCase().includes('ci-patch')) {
+    } else {
       console.log('patch')
       await bumpVersion(fileName)
-    } else {
-      ignoreBump = true
-      console.log('do nothing')
     }
 
     if (!ignoreBump) {
