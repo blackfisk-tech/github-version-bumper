@@ -1,5 +1,8 @@
 import { Toolkit } from 'actions-toolkit'
 import { bumpVersion } from './helpers/bumper'
+const { version } = require('../version.json')
+
+console.log(`Version ${version}`)
 
 Toolkit.run(async (tools) => {
   const fileName = process.env.VERSION_FILE_NAME || 'package.json'
