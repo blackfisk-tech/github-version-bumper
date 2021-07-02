@@ -68,7 +68,7 @@ Toolkit.run(async (tools) => {
     }
     else if(currentBranch === 'staging' || currentBranch === 'qc'  || currentBranch === 'production' ){
       console.log('current branch')
-      await bumpVersion(fileName,{ major: 1 })
+      await bumpVersion(fileName,{ major: true, entry })
     }
     else if(currentBranch === 'alpha'){
 
