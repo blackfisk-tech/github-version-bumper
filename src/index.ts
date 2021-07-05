@@ -40,7 +40,6 @@ Toolkit.run(async (tools) => {
     console.log('lastcommitmessage', lastCommit)
 
     // Bumping Starts
-    if(currentBranch === 'master'){
       if (lastCommit.toLowerCase().includes('ci-ignore')) {
         console.log('ci-ignore')
         ignoreBump = true
@@ -65,16 +64,6 @@ Toolkit.run(async (tools) => {
         console.log('patch')
         await bumpVersion(fileName)
       }
-    }
-    else if(currentBranch === 'staging' || currentBranch === 'qc'  || currentBranch === 'production' ){
-      console.log('current branch')
-      await bumpVersion(fileName,{ major: true, entry })
-    }
-    else if(currentBranch === 'alpha'){
-
-    }
-
-
 
     if (!ignoreBump) {
       const newVersion = JSON.parse(tools.getFile(fileName)).version
@@ -88,7 +77,6 @@ Toolkit.run(async (tools) => {
 
       // PUSH THE CHANGES
       const remoteRepo = `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`
-      await tools.runInWorkspace('git', ['pull', '--tags'])
       await tools.runInWorkspace('git', ['tag', newVersion])
       await tools.runInWorkspace('git', ['push', remoteRepo, '--follow-tags'])
       await tools.runInWorkspace('git', ['push', remoteRepo, '--tags'])
