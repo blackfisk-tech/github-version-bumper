@@ -88,6 +88,7 @@ Toolkit.run(async (tools) => {
 
       // PUSH THE CHANGES
       const remoteRepo = `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`
+      await tools.runInWorkspace('git', ['pull', '--tags'])
       await tools.runInWorkspace('git', ['tag', newVersion])
       await tools.runInWorkspace('git', ['push', remoteRepo, '--follow-tags'])
       await tools.runInWorkspace('git', ['push', remoteRepo, '--tags'])
