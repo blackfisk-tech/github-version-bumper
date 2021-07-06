@@ -38,7 +38,6 @@ Toolkit.run(async (tools) => {
       JSON.stringify(await tools.runInWorkspace('git', ['log', '-1'])).toLowerCase() || ''
 
     console.log('lastcommitmessage', lastCommit)
-    console.log('current--branch', currentBranch)
 
     // Bumping Starts
       if (lastCommit.toLowerCase().includes('ci-ignore')) {
