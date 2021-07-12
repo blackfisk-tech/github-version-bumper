@@ -3,15 +3,15 @@
     "version": "1.0.3",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/kaangokdemir/github-version-bumper.git"
+        "url": "git+https://github.com/nextstepguru/github-version-bumper.git"
     },
     "keywords": [],
     "author": "",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/kaangokdemir/github-version-bumper/issues"
+        "url": "https://github.com/nextstepguru/github-version-bumper/issues"
     },
-    "homepage": "https://github.com/kaangokdemir/github-version-bumper#readme",
+    "homepage": "https://github.com/nextstepguru/github-version-bumper#readme",
     "private": true,
     "main": "./dist/index.js",
     "scripts": {
