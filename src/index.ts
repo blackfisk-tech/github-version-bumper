@@ -1,8 +1,5 @@
 import { Toolkit } from 'actions-toolkit'
 import { bumpVersion } from './helpers/bumper'
-const { version } = require('../version.json')
-
-console.log(`Version ${version}`)
 
 Toolkit.run(async (tools) => {
   const fileName = process.env.VERSION_FILE_NAME || 'package.json'
@@ -12,6 +9,10 @@ Toolkit.run(async (tools) => {
       process.env.GITHUB_EMAIL || 'github-version-bumper@users.noreply.github.com'
 
   const commitMessage = 'version bumped to v'
+
+  const { version } = require(fileName)
+
+  console.log(`Version ${version}`)
 
   try {
     // SET USER
