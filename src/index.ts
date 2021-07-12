@@ -10,9 +10,9 @@ Toolkit.run(async (tools) => {
 
   const commitMessage = 'version bumped to v'
 
-  const { version } = require(fileName)
+  const currentVersion = JSON.parse(tools.getFile(fileName)).version
 
-  console.log(`Version ${version}`)
+  console.log(`Version ${currentVersion}`)
 
   try {
     // SET USER
