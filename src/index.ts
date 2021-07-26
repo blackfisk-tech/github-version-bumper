@@ -89,7 +89,19 @@ Toolkit.run(async (tools) => {
       }
     }
     else if(currentBranch === 'alpha'){
-
+      const bumpedBranch = await bumpVersion(fileName)
+      ;
+      if(bumpedBranch.original.includes("pr")){
+        let branchVersion = bumpedBranch.original.split('-pr.')[1]
+        branchVersion++;
+        const str2 = bumpedBranch.original.slice(0, -1) + branchVersion
+        await bumpVersion(fileName, { replace : str2 })
+      }else{
+        const vO =   bumpedBranch.original
+        const pre = `-pr.0`
+        const  replace = vO.concat(pre)
+        await bumpVersion(fileName, { replace })
+      }
     }
 
     if (!ignoreBump) {
