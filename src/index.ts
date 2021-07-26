@@ -72,8 +72,6 @@ Toolkit.run(async (tools) => {
     else if(currentBranch === 'staging' || currentBranch === 'qc'  || currentBranch === 'production' ){
       console.log('current branch is:', currentBranch)
       console.log('entry:', entry)
-      console.log('filename demo-',fileName + '-rc' )
-      // await bumpVersion(fileName,{ major: true, replace: 'x.x.2-rc' })
       const bumpedBranch = await bumpVersion(fileName)
       ;
       if(bumpedBranch.original.includes("rc")){
