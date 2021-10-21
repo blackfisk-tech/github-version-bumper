@@ -10,7 +10,7 @@ Toolkit.run(async (tools) => {
   const githubEmail =
       process.env.GITHUB_EMAIL || 'github-version-bumper@users.noreply.github.com'
 
-  const commitMessage = 'version bumped to v'
+  const commitMessage = 'v'
 
   const currentVersion = JSON.parse(tools.getFile(fileName)).version
 
@@ -109,7 +109,7 @@ Toolkit.run(async (tools) => {
         'commit',
         '-a',
         '-m',
-        `ci: ${commitMessage} ${newVersion}`,
+        `ci: ${commitMessage}${newVersion}`,
       ])
 
       // PUSH THE CHANGES
