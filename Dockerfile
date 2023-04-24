@@ -24,8 +24,10 @@ COPY package*.json ./
 # Install dependencies
 RUN apt-get update
 RUN apt-get -y install git
+RUN git --version
+RUN git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 
 # Copy the rest of your action's code
