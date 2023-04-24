@@ -1,7 +1,5 @@
 import { Toolkit } from 'actions-toolkit'
 import { bumpVersion } from './helpers/bumper'
-const { version } = require('../version.json')
-const bump = require('json-bumper')
 
 Toolkit.run(async (tools) => {
   const fileName = process.env.VERSION_FILE_NAME || 'package.json'
@@ -9,6 +7,7 @@ Toolkit.run(async (tools) => {
   const githubUser = process.env.GITHUB_USER || 'GitHub Version Bumper'
   const githubEmail =
       process.env.GITHUB_EMAIL || 'github-version-bumper@users.noreply.github.com'
+  const githubWorkspace = process.env.GITHUB_WORKSPACE
 
   const commitMessage = 'v'
 
@@ -17,6 +16,14 @@ Toolkit.run(async (tools) => {
   console.log(`Version ${currentVersion}`)
 
   try {
+    // MAKE SAFE
+    await tools.runInWorkspace('git', [
+      'config',
+      '--global',
+      '--add',
+      'safe.directory',
+      `${githubWorkspace}`,
+    ])
     // SET USER
     await tools.runInWorkspace('git', [
       'config',
@@ -43,7 +50,7 @@ Toolkit.run(async (tools) => {
     console.log('lastcommitmessage', lastCommit)
 
     // Bumping Starts
-    if(currentBranch === 'master'){
+    if (currentBranch === 'master') {
       if (lastCommit.toLowerCase().includes('ci-ignore')) {
         console.log('ci-ignore')
         ignoreBump = true
@@ -68,36 +75,34 @@ Toolkit.run(async (tools) => {
         console.log('patch')
         await bumpVersion(fileName)
       }
-    }
-    else if(currentBranch === 'staging' || currentBranch === 'qc'  || currentBranch === 'production' ){
+    } else if (currentBranch === 'staging' || currentBranch === 'qc' || currentBranch === 'production') {
       console.log('current branch is:', currentBranch)
       console.log('entry:', entry)
       const bumpedBranch = await bumpVersion(fileName)
-      ;
-      if(bumpedBranch.original.includes("rc")){
+
+      if (bumpedBranch.original.includes('rc')) {
         let branchVersion = bumpedBranch.original.split('-rc.')[1]
-        branchVersion++;
+        branchVersion++
         const str2 = bumpedBranch.original.slice(0, -1) + branchVersion
-        await bumpVersion(fileName, { replace : str2 })
-      }else{
-        const vO =   bumpedBranch.original
-        const pre = `-rc.0`
-        const  replace = vO.concat(pre)
+        await bumpVersion(fileName, { replace: str2 })
+      } else {
+        const vO = bumpedBranch.original
+        const pre = '-rc.0'
+        const replace = vO.concat(pre)
         await bumpVersion(fileName, { replace })
       }
-    }
-    else if(currentBranch === 'alpha'){
+    } else if (currentBranch === 'alpha') {
       const bumpedBranch = await bumpVersion(fileName)
-      ;
-      if(bumpedBranch.original.includes("pr")){
+
+      if (bumpedBranch.original.includes('pr')) {
         let branchVersion = bumpedBranch.original.split('-pr.')[1]
-        branchVersion++;
+        branchVersion++
         const str2 = bumpedBranch.original.slice(0, -1) + branchVersion
-        await bumpVersion(fileName, { replace : str2 })
-      }else{
-        const vO =   bumpedBranch.original
-        const pre = `-pr.0`
-        const  replace = vO.concat(pre)
+        await bumpVersion(fileName, { replace: str2 })
+      } else {
+        const vO = bumpedBranch.original
+        const pre = '-pr.0'
+        const replace = vO.concat(pre)
         await bumpVersion(fileName, { replace })
       }
     }

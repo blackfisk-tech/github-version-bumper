@@ -8,7 +8,7 @@
 #
 # You can specify a version:
 # FROM node:10-slim
-FROM node:18-slim
+FROM node:18.16-slim
 
 # Labels for GitHub to read your action
 LABEL "com.github.actions.name"="Automated version bump for npm packages."
@@ -24,8 +24,6 @@ COPY package*.json ./
 # Install dependencies
 RUN apt-get update
 RUN apt-get -y install git
-RUN git --version
-RUN git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
 RUN npm ci --omit=dev
 
