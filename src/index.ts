@@ -8,6 +8,8 @@ Toolkit.run(async (tools) => {
   const githubEmail =
       process.env.GITHUB_EMAIL || 'github-version-bumper@users.noreply.github.com'
   const githubWorkspace = process.env.GITHUB_WORKSPACE
+  console.log({ githubWorkspace })
+  console.log({ env: process.env })
 
   const commitMessage = 'v'
 
