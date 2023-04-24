@@ -107,6 +107,9 @@ Toolkit.run(async (tools) => {
         const replace = vO.concat(pre)
         await bumpVersion(fileName, { replace })
       }
+    } else {
+      console.log('default environment: bump version')
+      await bumpVersion(fileName)
     }
 
     if (!ignoreBump) {
