@@ -1,6 +1,6 @@
 {
   "name": "github-version-bumper",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nextstepguru/github-version-bumper.git"
