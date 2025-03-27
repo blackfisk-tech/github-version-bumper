@@ -1,7 +1,17 @@
-import { Toolkit } from 'actions-toolkit'
+import fs from 'fs'
+import path from 'path'
+import * as core from '@actions/core'
+import * as exec from '@actions/exec'
 import { bumpVersion } from './helpers/bumper'
 
-Toolkit.run(async (tools) => {
+const getVersion = async () => {
+  const filePath = process.env.VERSION_FILE_PATH || './package.json'
+  const absolutePath = path.resolve(process.cwd(), filePath)
+  const fileContent = await fs.promises.readFile(absolutePath, 'utf8')
+  const jsonData = JSON.parse(fileContent)
+  return jsonData.version
+}
+const run = (async () => {
   const fileName = process.env.VERSION_FILE_NAME || 'package.json'
   const entry = process.env.VERSION_ENTRY || 'version'
   const githubUser = process.env.GITHUB_USER || 'GitHub Version Bumper'
@@ -11,13 +21,13 @@ Toolkit.run(async (tools) => {
 
   const commitMessage = 'v'
 
-  const currentVersion = JSON.parse(tools.getFile(fileName)).version
+  const currentVersion = await getVersion()
 
   console.log(`Version ${currentVersion}`)
 
   try {
     // MAKE SAFE
-    await tools.runInWorkspace('git', [
+    await exec.exec('git', [
       'config',
       '--global',
       '--add',
@@ -25,12 +35,12 @@ Toolkit.run(async (tools) => {
       `${githubWorkspace}`,
     ])
     // SET USER
-    await tools.runInWorkspace('git', [
+    await exec.exec('git', [
       'config',
       'user.name',
       `"${githubUser}"`,
     ])
-    await tools.runInWorkspace('git', [
+    await exec.exec('git', [
       'config',
       'user.email',
       `"${githubEmail}"`,
@@ -41,11 +51,11 @@ Toolkit.run(async (tools) => {
         process.env.GITHUB_REF as string,
     )?.[1] as string
 
-    await tools.runInWorkspace('git', ['checkout', currentBranch])
+    await exec.exec('git', ['checkout', currentBranch])
 
     // Getting last commit information
     const lastCommit =
-        JSON.stringify(await tools.runInWorkspace('git', ['log', '-1'])).toLowerCase() || ''
+        JSON.stringify(await exec.exec('git', ['log', '-1'])).toLowerCase() || ''
 
     console.log('lastcommitmessage', lastCommit)
 
@@ -111,9 +121,9 @@ Toolkit.run(async (tools) => {
     }
 
     if (!ignoreBump) {
-      const newVersion = JSON.parse(tools.getFile(fileName)).version
+      const newVersion = await getVersion()
       console.log('-newVersion', newVersion)
-      await tools.runInWorkspace('git', [
+      await exec.exec('git', [
         'commit',
         '-a',
         '-m',
@@ -122,14 +132,15 @@ Toolkit.run(async (tools) => {
 
       // PUSH THE CHANGES
       const remoteRepo = `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`
-      await tools.runInWorkspace('git', ['pull', '--tags'])
-      await tools.runInWorkspace('git', ['tag', newVersion])
-      await tools.runInWorkspace('git', ['push', remoteRepo, '--follow-tags'])
-      await tools.runInWorkspace('git', ['push', remoteRepo, '--tags'])
+      await exec.exec('git', ['pull', '--tags'])
+      await exec.exec('git', ['tag', newVersion])
+      await exec.exec('git', ['push', remoteRepo, '--follow-tags'])
+      await exec.exec('git', ['push', remoteRepo, '--tags'])
     }
   } catch (e) {
-    tools.log.fatal(e)
-    tools.exit.failure('Failed to bump version')
+    core.error(`${e}`)
+    core.setFailed('Failed to bump version')
   }
-  tools.exit.success('Version bumped!')
+  core.info('Version bumped!')
 })
+run()

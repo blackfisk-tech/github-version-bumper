@@ -1,12 +1,12 @@
-const bump = require('json-bumper')
+const bump = require("json-bumper");
 
 export const bumpVersion = async (fileName: string, options?: object) => {
- return await bump(fileName, options)
-  if (fileName === 'package.json') {
+  if (fileName === "package.json") {
     try {
-     return await bump('package-lock.json', options)
+      return await bump("package-lock.json", options);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-}
+  return await bump(fileName, options);
+};
