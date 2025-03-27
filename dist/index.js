@@ -1,5 +1,190 @@
-parcelRequire=function(e,r,t,n){var i,o="function"==typeof parcelRequire&&parcelRequire,u="function"==typeof require&&require;function f(t,n){if(!r[t]){if(!e[t]){var i="function"==typeof parcelRequire&&parcelRequire;if(!n&&i)return i(t,!0);if(o)return o(t,!0);if(u&&"string"==typeof t)return u(t);var c=new Error("Cannot find module '"+t+"'");throw c.code="MODULE_NOT_FOUND",c}p.resolve=function(r){return e[t][1][r]||r},p.cache={};var l=r[t]=new f.Module(t);e[t][0].call(l.exports,p,l,l.exports,this)}return r[t].exports;function p(e){return f(p.resolve(e))}}f.isParcelRequire=!0,f.Module=function(e){this.id=e,this.bundle=f,this.exports={}},f.modules=e,f.cache=r,f.parent=o,f.register=function(r,t){e[r]=[function(e,r){r.exports=t},{}]};for(var c=0;c<t.length;c++)try{f(t[c])}catch(e){i||(i=e)}if(t.length){var l=f(t[t.length-1]);"object"==typeof exports&&"undefined"!=typeof module?module.exports=l:"function"==typeof define&&define.amd?define(function(){return l}):n&&(this[n]=l)}if(parcelRequire=f,i)throw i;return f}({"rP21":[function(require,module,exports) {
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.bumpVersion=void 0;const e=require("json-bumper"),r=async(r,s)=>await e(r,s);exports.bumpVersion=r;
-},{}],"QCba":[function(require,module,exports) {
-"use strict";var e=require("actions-toolkit"),o=require("./helpers/bumper");e.Toolkit.run(async e=>{const i=process.env.VERSION_FILE_NAME||"package.json",s=process.env.VERSION_ENTRY||"version",r=process.env.GITHUB_USER||"GitHub Version Bumper",n=process.env.GITHUB_EMAIL||"github-version-bumper@users.noreply.github.com",a=process.env.GITHUB_WORKSPACE,t=JSON.parse(e.getFile(i)).version;console.log(`Version ${t}`);try{var c;await e.runInWorkspace("git",["config","--global","--add","safe.directory",`${a}`]),await e.runInWorkspace("git",["config","user.name",`"${r}"`]),await e.runInWorkspace("git",["config","user.email",`"${n}"`]);let t=!1;const p=null===(c=/refs\/[a-zA-Z]+\/(.*)/.exec(process.env.GITHUB_REF))||void 0===c?void 0:c[1];await e.runInWorkspace("git",["checkout",p]);const u=JSON.stringify(await e.runInWorkspace("git",["log","-1"])).toLowerCase()||"";if(console.log("lastcommitmessage",u),"master"===p)if(u.toLowerCase().includes("ci-ignore"))console.log("ci-ignore"),t=!0;else if(u.toLowerCase().includes("ci-version=")){const e=u.toLowerCase().split('ci-version=\\"')[1].split('\\"')[0];console.log("replace:",e),await(0,o.bumpVersion)(i,{replace:e,entry:s})}else if(u.toLowerCase().includes("ci-pre=")){console.log("pre");const e=u.toLowerCase().split('ci-pre=\\"')[1].split('\\"')[0];console.log("pre:",e),await(0,o.bumpVersion)(i,{pre:e,entry:s})}else u.toLowerCase().includes("ci-major")?(console.log("major"),await(0,o.bumpVersion)(i,{major:!0,entry:s})):u.toLowerCase().includes("ci-minor")?(console.log("minor"),await(0,o.bumpVersion)(i,{minor:!0,entry:s})):(console.log("patch"),await(0,o.bumpVersion)(i));else if("staging"===p||"qc"===p||"production"===p){console.log("current branch is:",p),console.log("entry:",s);const e=await(0,o.bumpVersion)(i);if(e.original.includes("rc")){let s=e.original.split("-rc.")[1];s++;const r=e.original.slice(0,-1)+s;await(0,o.bumpVersion)(i,{replace:r})}else{const s=e.original,r="-rc.0",n=s.concat(r);await(0,o.bumpVersion)(i,{replace:n})}}else if("alpha"===p){const e=await(0,o.bumpVersion)(i);if(e.original.includes("pr")){let s=e.original.split("-pr.")[1];s++;const r=e.original.slice(0,-1)+s;await(0,o.bumpVersion)(i,{replace:r})}else{const s=e.original,r="-pr.0",n=s.concat(r);await(0,o.bumpVersion)(i,{replace:n})}}else console.log("default environment: bump version"),await(0,o.bumpVersion)(i);if(!t){const o=JSON.parse(e.getFile(i)).version;console.log("-newVersion",o),await e.runInWorkspace("git",["commit","-a","-m",`ci: v${o}`]);const s=`https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`;await e.runInWorkspace("git",["pull","--tags"]),await e.runInWorkspace("git",["tag",o]),await e.runInWorkspace("git",["push",s,"--follow-tags"]),await e.runInWorkspace("git",["push",s,"--tags"])}}catch(l){e.log.fatal(l),e.exit.failure("Failed to bump version")}e.exit.success("Version bumped!")});
-},{"./helpers/bumper":"rP21"}]},{},["QCba"], null)
+var $kM5ZL$fs = require("fs");
+var $kM5ZL$path = require("path");
+var $kM5ZL$actionscore = require("@actions/core");
+var $kM5ZL$actionsexec = require("@actions/exec");
+var $kM5ZL$jsonbumper = require("json-bumper");
+
+
+function $parcel$interopDefault(a) {
+  return a && a.__esModule ? a.default : a;
+}
+
+
+
+
+
+const $06220180398b8211$export$52f84dc7de3cd4b8 = async (fileName, options)=>{
+    if (fileName === "package.json") try {
+        return await $kM5ZL$jsonbumper("package-lock.json", options);
+    } catch (error) {
+        console.log(error);
+    }
+    return await $kM5ZL$jsonbumper(fileName, options);
+};
+
+
+const $a800de2af34e93db$var$getVersion = async ()=>{
+    const filePath = process.env.VERSION_FILE_PATH || './package.json';
+    const absolutePath = (0, ($parcel$interopDefault($kM5ZL$path))).resolve(process.cwd(), filePath);
+    const fileContent = await (0, ($parcel$interopDefault($kM5ZL$fs))).promises.readFile(absolutePath, 'utf8');
+    const jsonData = JSON.parse(fileContent);
+    return jsonData.version;
+};
+const $a800de2af34e93db$var$run = async ()=>{
+    const fileName = process.env.VERSION_FILE_NAME || 'package.json';
+    const entry = process.env.VERSION_ENTRY || 'version';
+    const githubUser = process.env.GITHUB_USER || 'GitHub Version Bumper';
+    const githubEmail = process.env.GITHUB_EMAIL || 'github-version-bumper@users.noreply.github.com';
+    const githubWorkspace = process.env.GITHUB_WORKSPACE;
+    const commitMessage = 'v';
+    const currentVersion = await $a800de2af34e93db$var$getVersion();
+    console.log(`Version ${currentVersion}`);
+    try {
+        // MAKE SAFE
+        await $kM5ZL$actionsexec.exec('git', [
+            'config',
+            '--global',
+            '--add',
+            'safe.directory',
+            `${githubWorkspace}`
+        ]);
+        // SET USER
+        await $kM5ZL$actionsexec.exec('git', [
+            'config',
+            'user.name',
+            `"${githubUser}"`
+        ]);
+        await $kM5ZL$actionsexec.exec('git', [
+            'config',
+            'user.email',
+            `"${githubEmail}"`
+        ]);
+        let ignoreBump = false;
+        const currentBranch = /refs\/[a-zA-Z]+\/(.*)/.exec(process.env.GITHUB_REF)?.[1];
+        await $kM5ZL$actionsexec.exec('git', [
+            'checkout',
+            currentBranch
+        ]);
+        // Getting last commit information
+        const lastCommit = JSON.stringify(await $kM5ZL$actionsexec.exec('git', [
+            'log',
+            '-1'
+        ])).toLowerCase() || '';
+        console.log('lastcommitmessage', lastCommit);
+        // Bumping Starts
+        if (currentBranch === 'master') {
+            if (lastCommit.toLowerCase().includes('ci-ignore')) {
+                console.log('ci-ignore');
+                ignoreBump = true;
+            } else if (lastCommit.toLowerCase().includes('ci-version=')) {
+                const splitted = lastCommit.toLowerCase().split('ci-version=\\"');
+                const replace = splitted[1].split('\\"')[0];
+                console.log('replace:', replace);
+                await (0, $06220180398b8211$export$52f84dc7de3cd4b8)(fileName, {
+                    replace: replace,
+                    entry: entry
+                });
+            } else if (lastCommit.toLowerCase().includes('ci-pre=')) {
+                console.log('pre');
+                const splitted = lastCommit.toLowerCase().split('ci-pre=\\"');
+                const pre = splitted[1].split('\\"')[0];
+                console.log('pre:', pre);
+                await (0, $06220180398b8211$export$52f84dc7de3cd4b8)(fileName, {
+                    pre: pre,
+                    entry: entry
+                });
+            } else if (lastCommit.toLowerCase().includes('ci-major')) {
+                console.log('major');
+                await (0, $06220180398b8211$export$52f84dc7de3cd4b8)(fileName, {
+                    major: true,
+                    entry: entry
+                });
+            } else if (lastCommit.toLowerCase().includes('ci-minor')) {
+                console.log('minor');
+                await (0, $06220180398b8211$export$52f84dc7de3cd4b8)(fileName, {
+                    minor: true,
+                    entry: entry
+                });
+            } else {
+                console.log('patch');
+                await (0, $06220180398b8211$export$52f84dc7de3cd4b8)(fileName);
+            }
+        } else if (currentBranch === 'staging' || currentBranch === 'qc' || currentBranch === 'production') {
+            console.log('current branch is:', currentBranch);
+            console.log('entry:', entry);
+            const bumpedBranch = await (0, $06220180398b8211$export$52f84dc7de3cd4b8)(fileName);
+            if (bumpedBranch.original.includes('rc')) {
+                let branchVersion = bumpedBranch.original.split('-rc.')[1];
+                branchVersion++;
+                const str2 = bumpedBranch.original.slice(0, -1) + branchVersion;
+                await (0, $06220180398b8211$export$52f84dc7de3cd4b8)(fileName, {
+                    replace: str2
+                });
+            } else {
+                const vO = bumpedBranch.original;
+                const pre = '-rc.0';
+                const replace = vO.concat(pre);
+                await (0, $06220180398b8211$export$52f84dc7de3cd4b8)(fileName, {
+                    replace: replace
+                });
+            }
+        } else if (currentBranch === 'alpha') {
+            const bumpedBranch = await (0, $06220180398b8211$export$52f84dc7de3cd4b8)(fileName);
+            if (bumpedBranch.original.includes('pr')) {
+                let branchVersion = bumpedBranch.original.split('-pr.')[1];
+                branchVersion++;
+                const str2 = bumpedBranch.original.slice(0, -1) + branchVersion;
+                await (0, $06220180398b8211$export$52f84dc7de3cd4b8)(fileName, {
+                    replace: str2
+                });
+            } else {
+                const vO = bumpedBranch.original;
+                const pre = '-pr.0';
+                const replace = vO.concat(pre);
+                await (0, $06220180398b8211$export$52f84dc7de3cd4b8)(fileName, {
+                    replace: replace
+                });
+            }
+        } else {
+            console.log('default environment: bump version');
+            await (0, $06220180398b8211$export$52f84dc7de3cd4b8)(fileName);
+        }
+        if (!ignoreBump) {
+            const newVersion = await $a800de2af34e93db$var$getVersion();
+            console.log('-newVersion', newVersion);
+            await $kM5ZL$actionsexec.exec('git', [
+                'commit',
+                '-a',
+                '-m',
+                `ci: ${commitMessage}${newVersion}`
+            ]);
+            // PUSH THE CHANGES
+            const remoteRepo = `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
+            await $kM5ZL$actionsexec.exec('git', [
+                'pull',
+                '--tags'
+            ]);
+            await $kM5ZL$actionsexec.exec('git', [
+                'tag',
+                newVersion
+            ]);
+            await $kM5ZL$actionsexec.exec('git', [
+                'push',
+                remoteRepo,
+                '--follow-tags'
+            ]);
+            await $kM5ZL$actionsexec.exec('git', [
+                'push',
+                remoteRepo,
+                '--tags'
+            ]);
+        }
+    } catch (e) {
+        $kM5ZL$actionscore.error(`${e}`);
+        $kM5ZL$actionscore.setFailed('Failed to bump version');
+    }
+    $kM5ZL$actionscore.info('Version bumped!');
+};
+$a800de2af34e93db$var$run();
+
+
