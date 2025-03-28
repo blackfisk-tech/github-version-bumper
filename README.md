@@ -71,8 +71,8 @@ jobs:
 
 ## Contributors
 
-Kaan Gökdemir - Author ([@kaangokdemir](https://twitter.com/kaangokdemir)) - [kaangokdemir.com](https://kaangokdemir.com)
-Garion Berg - Blackfisk Fork Maintainer ([garionberg](https://github.com/garionberg))
+- Kaan Gökdemir - Author ([@kaangokdemir](https://twitter.com/kaangokdemir)) - [kaangokdemir.com](https://kaangokdemir.com)
+- Garion Berg - Blackfisk Fork Maintainer ([garionberg](https://github.com/garionberg))
 
 ## License
 
