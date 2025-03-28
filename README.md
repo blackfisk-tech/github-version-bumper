@@ -26,14 +26,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout source code"
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v3"
       - name: "GitHub Version Bumper"
-        uses: "kaangokdemir/github-version-bumper@master"
+        uses: "blackfisk-tech/github-version-bumper@master"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_NAME: "Your Name"
           GITHUB_EMAIL: "your_email@gmail.com"
           VERSION_FILE_NAME: "your_version_file.json"
+          VERSION_FILE_PATH: "/your_version_file.json"
 ```
 ## Customize with commit messages
 
@@ -47,13 +48,14 @@ jobs:
 
 ## Environment Variables
 
-| Environment Value 	| Description                                         	| Default                                          	|
-|-------------------	|-----------------------------------------------------	|--------------------------------------------------	|
+| Environment Value 	  | Description                                         	| Default                                          	  |
+|-------------------	  |-----------------------------------------------------	|--------------------------------------------------	  |
 | `GITHUB_TOKEN`      	| Your authorized GitHub token                        	| `undefined`                                        	|
 | `GITHUB_USER`       	| Your preferred GitHub display name                  	| `'GitHub Version Bumper'`                          	|
 | `GITHUB_EMAIL`      	| Your GitHub account's email address to make commits 	| `'github-version-bumper@users.noreply.github.com'` 	|
 | `VERSION_FILE_NAME` 	| The file where your version entry exists            	| `'package.json'`                                   	|
 | `VERSION_ENTRY`     	| Entry key of your 'version'                         	| `'version'`                                        	|
+| `VERSION_FILE_PATH`   | Path to the file where your version entry exists      | `'/package.json'`                                   |
 
 ## Contributing
 
@@ -70,6 +72,7 @@ jobs:
 ## Contributors
 
 Kaan Gökdemir - Author ([@kaangokdemir](https://twitter.com/kaangokdemir)) - [kaangokdemir.com](https://kaangokdemir.com)
+Garion Berg - Blackfisk Fork Maintainer ([garionberg](https://github.com/garionberg))
 
 ## License
 
